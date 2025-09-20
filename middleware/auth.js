@@ -1,25 +1,28 @@
 import jwt from "jsonwebtoken";
-import User from('../models/User.js');
+import User from "../models/user.js";
 
-export const protect = async (req, res, next)=>{
-    // Check if the request has an authorization header
-    // This header is expected to contain the JWT token for authentication8
-    const token = req.headers.authorization;
-    
-    if(!token){
-        return res.json({success: false, message: "not authorized"})
-    }
-    try {
-        const userId = jwt.decode(token, process.env.JWT_SECRET)
+export const protect = async (req, res, next) => {
+  let token = req.headers.authorization;
 
-        if(!userId){
-            return res.json({success: false, message: "not authorized"})
-        }
-        // // Find the user by ID and exclude the password field from the result
-        // // This is to ensure that the password is not sent back to the client
-        // req.user = await User.findById(userId).select("-password")
-        next();
-    } catch (error) {
-        return res.json({success: false, message: "not authorized"})
+  if (!token) {
+    return res.status(401).json({ success: false, message: "Not authorized, no token" });
+  }
+
+  try {
+
+    // Verify and decode
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // decoded looks like { id: "...", iat: ..., exp: ... }
+    req.user = await User.findById(decoded.id).select("-password");
+
+    if (!req.user) {
+      return res.status(401).json({ success: false, message: "User not found" });
     }
-}
+
+    next();
+  } catch (error) {
+    console.error(error);
+    return res.status(401).json({ success: false, message: "Not authorized, token failed" });
+  }
+};

@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/AuthRoute.js";
 import patientRoutes from "./routes/PatientRoute.js";
+import doctorRoutes from "./routes/DoctorRoute.js";
 
 dotenv.config();
 
@@ -14,10 +15,13 @@ connectDB();
 
 // Middleware
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/patients", patientRoutes);
+app.use("/api/doctors", doctorRoutes);
+
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
