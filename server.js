@@ -4,6 +4,7 @@ import connectDB from "./config/db.js";
 import authRoutes from "./routes/AuthRoute.js";
 import patientRoutes from "./routes/PatientRoute.js";
 import doctorRoutes from "./routes/DoctorRoute.js";
+import mappingRoutes from "./routes/MappingRoute.js";
 
 dotenv.config();
 
@@ -21,6 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/auth", authRoutes);
 app.use("/api/patients", patientRoutes);
 app.use("/api/doctors", doctorRoutes);
+app.use("/api/mapping", mappingRoutes);
 
 
 app.listen(PORT, () => {
